@@ -1,9 +1,9 @@
 # Common metadata (for interoperability; also discoverable)
-title: Lab sample Hello world
+title: test bmathias
 abstract: This lab is a simple lab
 alternateName: Hello Lab
 contactPoint:
-  email: olivier.daumas@acri-st.fr
+  email: benjamin.mathias@acri-st.fr
   id: 123456
   organisation-name: acri-st
   role: Developer
