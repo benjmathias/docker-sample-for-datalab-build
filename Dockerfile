@@ -8,23 +8,22 @@ EXPOSE 8000
 ARG WORK_DIR="/opt"
 WORKDIR $WORK_DIR
 
-# Run apt operations as root
+# Run apt operations
 RUN apt-get update \
   && apt-get install -y --no-install-recommends python3-pip=20.0.2-5ubuntu1.11 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages as root
+# Install Python packages
 RUN pip3 install --no-cache-dir aiohttp==3.7.4
 
-# Copy files as root
+# Copy files
 COPY src/. ./
 
-# Set permissions as root
+# Set executable permission for script
 RUN chmod +x ./main.sh
-RUN chown -R user:user $WORK_DIR
 
-# Switch to the user account for running the container
-USER user
+# Set permissions that will allow the runtime user to access files
+RUN chmod -R 755 $WORK_DIR
 
 CMD ["./main.sh"]
