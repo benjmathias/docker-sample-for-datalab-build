@@ -19,11 +19,13 @@ RUN pip3 install --no-cache-dir aiohttp==3.7.4
 
 # Copy files
 COPY src/. ./
+COPY init.sh ./
 
-# Set executable permission for script
+# Set executable permission for scripts
 RUN chmod +x ./main.sh
+RUN chmod +x ./init.sh
 
 # Set permissions that will allow the runtime user to access files
 RUN chmod -R 755 $WORK_DIR
 
-CMD ["./main.sh"]
+CMD ["./init.sh"]
