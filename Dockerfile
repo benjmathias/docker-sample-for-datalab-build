@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 LABEL maintainer="nmaltsev@argans.eu"
 EXPOSE 10000
 EXPOSE 8000
-ARG WORK_DIR="/opt"
+ARG WORK_DIR="/opt/datalab"
 WORKDIR $WORK_DIR
 
 # Run apt operations
@@ -17,15 +17,15 @@ RUN apt-get update \
 # Install Python packages
 RUN pip3 install --no-cache-dir aiohttp==3.7.4
 
-# Copy files
-COPY src/. ./
-COPY init.sh ./
+# Copy application files to the standard datalab location
+COPY src/app.py ./
+COPY src/main.sh ./start.sh
 
 # Set executable permission for scripts
-RUN chmod +x ./main.sh
-RUN chmod +x ./init.sh
+RUN chmod +x ./start.sh
 
 # Set permissions that will allow the runtime user to access files
 RUN chmod -R 755 $WORK_DIR
 
-CMD ["./init.sh"]
+# Use the standard datalab entrypoint
+CMD ["/sbin/tini", "--", "/.datalab/run.sh"]
