@@ -1,15 +1,16 @@
 #!/bin/bash
 # Simple Jupyter start script for ESA Datalabs
 
-echo "Starting Jupyter Lab on port $MAIN_PORT"
-echo "Datalab ID: $MAIN_ID"
+echo "Starting Jupyter Lab on port $IF_main_port"
+echo "Interface ID: $IF_main_id"
+echo "User: $USER"
 
-# Start Jupyter Lab with basic configuration
+# Start Jupyter Lab with correct SCIAPPS path configuration
 exec jupyter lab \
   --ip=0.0.0.0 \
-  --port=$MAIN_PORT \
+  --port=$IF_main_port \
   --no-browser \
   --allow-root \
-  --NotebookApp.token='' \
-  --NotebookApp.password='' \
-  --NotebookApp.base_url="/datalabs/$MAIN_ID" 
+  --ServerApp.token='' \
+  --ServerApp.password='' \
+  --ServerApp.base_url="/datalabs/$IF_main_id" 
