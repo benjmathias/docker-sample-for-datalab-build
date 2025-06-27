@@ -1,37 +1,23 @@
-ARG JL_BASE_VERSION=0.8.0-stable
+ARG JL_BASE_VERSION=stable
 ARG REGISTRY=scidockreg.esac.esa.int:62530
-FROM ${REGISTRY}/datalabs/datalabs_base:${JL_BASE_VERSION}-20.04
-ENV DEBIAN_FRONTEND noninteractive
-LABEL maintainer="nmaltsev@argans.eu"
+FROM ${REGISTRY}/datalabs/jl_base:${JL_BASE_VERSION}
 
-# Standard ESA Datalabs Jupyter port
+ENV DEBIAN_FRONTEND noninteractive
+LABEL maintainer="bmathias@esa.int"
+
+# The standard Jupyter port is 10000 in ESA Datalabs
 EXPOSE 10000
 
-ARG WORK_DIR="/opt/datalab"
-WORKDIR $WORK_DIR
+# Install your custom python package into the existing conda environment
+RUN /opt/miniconda/bin/pip install --no-cache-dir aiohttp==3.7.4
 
-# Install Python packages including Jupyter
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3-pip curl \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+# Copy your custom application so it can be used from notebooks
+COPY src/app.py /opt/datalab/custom_app.py
 
-# Install Jupyter and your custom packages
-RUN pip3 install --no-cache-dir \
-    jupyterlab==3.6.3 \
-    aiohttp==3.7.4
-
-# Copy your custom application
-COPY src/app.py ./custom_app.py
-
-# Copy the Jupyter start script
-COPY start.sh ./start.sh
-
-# Set executable permissions
-RUN chmod +x ./start.sh
-
-# Set permissions for runtime user
-RUN chmod -R 755 $WORK_DIR
+# Overwrite the start.sh with our custom one to ensure it runs
+# the correct version of jupyter and has the correct paths.
+COPY start.sh /opt/datalab/start.sh
+RUN chmod +x /opt/datalab/start.sh
 
 # Use standard datalab entrypoint
 CMD ["/sbin/tini", "--", "/.datalab/run.sh"]
